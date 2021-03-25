@@ -1,0 +1,55 @@
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
+
+class SignupSerializer(serializers.Serializer):
+    
+    email = serializers.EmailField(max_length=255)
+    password = serializers.CharField(max_length=128)
+    first_name = serializers.CharField(max_length=30, default='',
+                                       required=False)
+    last_name = serializers.CharField(max_length=30, default='',
+                                      required=False)
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+    password = serializers.CharField(max_length=128)
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+
+
+class PasswordResetVerifiedSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=40)
+    password = serializers.CharField(max_length=128)
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    password = serializers.CharField(max_length=128)
+class Role(models.Model):
+  
+  STUDENT = 1
+  TEACHER = 2
+  SECRETARY = 3
+  SUPERVISOR = 4
+  ADMIN = 5
+  ROLE_CHOICES = (
+      (STUDENT, 'student'),
+      (TEACHER, 'teacher'),
+      (SECRETARY, 'secretary'),
+      (SUPERVISOR, 'supervisor'),
+      (ADMIN, 'admin'),
+  )
+
+  id = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, primary_key=True)
+
+  def __str__(self):
+      return self.get_id_display()
+
+
+class User(AbstractUser):
+  roles = models.ManyToManyField(Role)
+
+
